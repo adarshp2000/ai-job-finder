@@ -1,0 +1,7 @@
+{
+  "titles": ["AI Engineer", "Machine Learning", "ML Engineer", "Data Scientist", "Software Engineer"],
+  "skills": ["python", "llm", "aws", "kafka", "fastapi", "react"],
+  "locations": ["Remote", "New York", "NY", "United States"],
+  "remote": "any",
+  "exclude": ["clearance", "c2c", "unpaid", "commission", "third party", "recruitment agency"]
+}
