@@ -1,7 +1,12 @@
 {
   "titles": ["AI Engineer", "Machine Learning", "ML Engineer", "Data Scientist", "Software Engineer"],
   "skills": ["python", "llm", "aws", "kafka", "fastapi", "react"],
-  "locations": ["Remote", "New York", "NY", "United States"],
+  "locations": [
+  "United States", "USA", "US", "U.S.", "U.S.A",
+  "Remote (US)", "Remote - US", "Remote, US", "US Remote",
+  "NY", "NJ", "CT", "MA", "PA", "MD", "DC", "VA", "NC", "SC", "GA", "FL",
+  "TX", "CO", "AZ", "UT", "NV", "CA", "WA", "OR", "IL", "MI", "MN"
+],
   "remote": "any",
   "exclude": ["clearance", "c2c", "unpaid", "commission", "third party", "recruitment agency"]
 }

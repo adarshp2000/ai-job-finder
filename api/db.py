@@ -1,7 +1,9 @@
 from pathlib import Path
 import sqlite3
 
-DB_PATH = Path("data/jobs.db")
+# always resolve absolute path to the project root
+BASE_DIR = Path(__file__).resolve().parents[1]
+DB_PATH = BASE_DIR / "data" / "jobs.db"
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)

@@ -9,10 +9,30 @@ async def fetch_lever(company: str) -> list[dict]:
 
     jobs = []
     for j in data:
+        # Lever nests location inside "categories" — this is the correct key
+        categories = j.get("categories") or {}
+        location = (
+            categories.get("location")        # e.g. "New York, NY"
+            or categories.get("commitment")   # fallback: "Full-time"
+            or j.get("workplaceType")         # fallback: "remote"
+            or ""
+        )
+
+        # Grab plain-text description (Lever provides both HTML and plain)
+        description = (
+            j.get("descriptionPlain")
+            or j.get("description")
+            or ""
+        )
+
         jobs.append({
+            "source": "lever",
+            "source_key": company,
             "company": company,
             "title": j.get("text"),
-            "location": (j.get("categories") or {}).get("location"),
+            "location": location,
             "url": j.get("hostedUrl"),
+            "description": description,
         })
+
     return jobs
