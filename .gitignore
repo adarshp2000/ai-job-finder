@@ -1,18 +1,21 @@
-# Python cache
+# python
 __pycache__/
 *.pyc
-
-# Virtual environment
+*.pyo
+*.pyd
 .venv/
+venv/
 
-# Database
-data/*.db
+# database
+data/jobs.db
 
-# Runtime state
-data/*.json
+# environment
+.env
 
-# Logs
-*.log
+# node
+node_modules/
+dist/
 
-# VSCode
-.vscode/
+# system
+.DS_Store
+Thumbs.db

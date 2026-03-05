@@ -1,6 +1,18 @@
 import re
 from typing import Dict, Any
 
+# Titles we NEVER want
+EXCLUDE_TITLE_WORDS = [
+    "intern", "internship",
+    "contract", "temporary",
+    "manager", "management",
+    "director", "vp", "vice president",
+    "head of",
+    "principal",
+    "lead", "tech lead",
+    "staff", "senior staff",
+]
+
 def norm(s: str) -> str:
     return (s or "").lower()
 
@@ -15,10 +27,13 @@ def word_hits(text: str, words: list[str]) -> int:
         w = w.strip().lower()
         if not w:
             continue
-        # simple boundary-ish match
         if re.search(rf"(?<!\w){re.escape(w)}(?!\w)", t):
             hits += 1
     return hits
+
+def title_is_excluded(title: str) -> bool:
+    t = norm(title)
+    return any(x in t for x in EXCLUDE_TITLE_WORDS)
 
 def is_excluded(job_text: str, prefs: Dict[str, Any]) -> bool:
     return contains_any(job_text, prefs.get("exclude", []))
@@ -26,12 +41,16 @@ def is_excluded(job_text: str, prefs: Dict[str, Any]) -> bool:
 def match_score(job: Dict[str, Any], prefs: Dict[str, Any]) -> tuple[bool, float, str]:
     """
     Returns: (is_match, score_0_to_1, reason)
-    Simple rule-based scoring.
+    Rule-based scoring with title filtering + skill minimum.
     """
     title = job.get("title") or ""
     location = job.get("location") or ""
     desc = job.get("description") or ""
     text = f"{title}\n{location}\n{desc}"
+
+    # HARD FILTERS
+    if title_is_excluded(title):
+        return (False, 0.0, "Excluded seniority/title")
 
     if is_excluded(text, prefs):
         return (False, 0.0, "Excluded keyword")
@@ -50,7 +69,10 @@ def match_score(job: Dict[str, Any], prefs: Dict[str, Any]) -> tuple[bool, float
     # combine
     score = 0.55 * title_hit + 0.35 * skill_score + 0.10 * loc_hit
 
-    is_match = score >= 0.35  # threshold; tune this
-    reason = f"title_hit={title_hit:.0f}, skill_hits={skill_hits}, loc_hit={loc_hit:.0f}"
+    # NEW RULE: require at least 1 skill match if skills list is not empty
+    if skills and skill_hits == 0:
+        return (False, float(score), f"Rejected: no skill match. title_hit={title_hit:.0f}, loc_hit={loc_hit:.0f}")
 
+    is_match = score >= 0.35
+    reason = f"title_hit={title_hit:.0f}, skill_hits={skill_hits}, loc_hit={loc_hit:.0f}"
     return (is_match, float(score), reason)
